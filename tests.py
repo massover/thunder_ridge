@@ -4,8 +4,7 @@ import requests
 from mock import patch
 
 from models import Email
-from utils import parse_confirmation_link
-from service import get_email_from_ses_email
+from utils import parse_confirmation_link, get_email_from_ses_email
 
 
 def test_get_confirmation_link():
