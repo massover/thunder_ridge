@@ -72,7 +72,4 @@ class Email(object):
             Source=constants.FROM_EMAIL_ADDRESS,
             Destinations=destinations,
         )
-        logger.info('Winning email successfully forwarded')
-
-
-
+        logger.info('Winning email successfully forwarded to {}'.format(' '.join(destinations)))
