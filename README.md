@@ -1,6 +1,6 @@
 # Thunder Ridge
 
-A lambda function to run on SES Emails using the [python lambda package](https://github.com/nficano/python-lambda)
+A lambda function to run on SES Emails using [python lambda](https://github.com/nficano/python-lambda)
 
 ## Quickstart
 
@@ -15,3 +15,11 @@ make test
 ```
 make deploy
 ```
+
+## AWS Configuration
+
+Lambda requires an `IAM` `role` with the following policies
+
+- AmazonS3FullAccess
+- AmazonSESFullAccess
+- AWSLambdaBasicExecutionRole
