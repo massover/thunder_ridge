@@ -1,7 +1,11 @@
 import quopri
 
+import requests
+from mock import patch
+
 from models import Email
 from utils import parse_confirmation_link
+from service import get_email_from_ses_email
 
 
 def test_get_confirmation_link():
@@ -45,3 +49,15 @@ def test_email_is_winner():
 def test_email_is_try_again():
     email = Email('message_id', 'to', Email.TRY_AGAIN_SUBJECT_TEXT)
     assert email.is_try_again
+
+
+@patch('requests_oauthlib.OAuth2Session.fetch_token')
+@patch('requests_oauthlib.OAuth2Session.get')
+def test_get_email_from_ses_email(mock_get, _):
+    response = requests.Response()
+    response.json = lambda: {'user': {'email': 'user@example.com'}}
+    mock_get.return_value = response
+
+    email = get_email_from_ses_email('this-is-mocked@example.com')
+    assert email == 'user@example.com'
+
