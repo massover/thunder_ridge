@@ -6,12 +6,12 @@ A lambda function to run on SES Emails using the [python lambda package](https:/
 
 ```
 git clone https://github.com/massover/thunder_ridge.git
-pip install -r requirements-dev.txt
-py.test tests.py
+make develop
+make test
 ```
 
 ## Deploy
 
 ```
-lambda deploy
+make deploy
 ```

@@ -1,10 +1,12 @@
 import quopri
 import logging
+import email
 
 import requests
 import boto3
 
 import utils
+import constants
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -48,13 +50,29 @@ class Email(object):
     def is_confirmation(self):
         return self.CONFIRMATION_SUBJECT_TEXT in self.subject
 
-    def make_confirmation_request(self):
+    @property
+    def body(self):
         s3 = boto3.resource('s3')
-        object = s3.Object('killington', self.message_id)
-        body = object.get()["Body"].read()
-        confirmation_link = utils.parse_confirmation_link(quopri.decodestring(body))
+        object = s3.Object(constants.S3_BUCKET_NAME, self.message_id)
+        return object.get()["Body"].read()
+
+    def make_confirmation_request(self):
+        confirmation_link = utils.parse_confirmation_link(quopri.decodestring(self.body))
         response = requests.get(confirmation_link)
         message = ('response.url: %s\n'
                    'response.status_code: %s\n'
                    'response.text: %s')
         logger.info(message, response.url, response.status_code, response.text)
+
+    def forward(self, destinations):
+        message = email.message_from_string(self.body)
+        ses = boto3.client('ses')
+        ses.send_raw_email(
+            RawMessage={'Data': message.as_string()},
+            Source=message['From'],
+            Destinations=destinations,
+        )
+        logger.info('Winning email successfully forwarded')
+
+
+
