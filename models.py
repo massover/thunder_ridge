@@ -69,7 +69,7 @@ class Email(object):
         ses = boto3.client('ses')
         ses.send_raw_email(
             RawMessage={'Data': message.as_string()},
-            Source=message['From'],
+            Source=constants.FROM_EMAIL_ADDRESS,
             Destinations=destinations,
         )
         logger.info('Winning email successfully forwarded')
