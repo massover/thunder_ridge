@@ -10,4 +10,4 @@ TOKEN_URL = API_URL + 'o/token/'
 CLIENT_ID = os.environ['CLIENT_ID']
 CLIENT_SECRET = os.environ['CLIENT_SECRET']
 
-SES_DETAIL_URL = API_URL + '/api/ses/'
+SES_DETAIL_URL = API_URL + 'api/ses/'
