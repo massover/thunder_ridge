@@ -12,7 +12,7 @@ def parse_confirmation_link(body):
     return confirmation_link.replace('\n', '')
 
 
-def get_email_from_ses_email(ses_email):
+def get_email_address_from_ses_email(ses_email):
     client = BackendApplicationClient(client_id=constants.CLIENT_ID)
     oauth2_session = OAuth2Session(client=client)
     oauth2_token = oauth2_session.fetch_token(

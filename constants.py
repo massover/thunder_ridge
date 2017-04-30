@@ -12,6 +12,6 @@ CLIENT_SECRET = os.environ['CLIENT_SECRET']
 
 SES_DETAIL_URL = API_URL + 'api/ses/'
 
-ADMIN_EMAIL = os.environ['ADMIN_EMAIL']
+ADMIN_EMAIL_ADDRESS = os.environ['ADMIN_EMAIL']
 
 S3_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
