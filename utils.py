@@ -14,7 +14,7 @@ logger.setLevel(logging.INFO)
 def parse_confirmation_link(html):
     logging.info('Parsing html for confirmation link: {}'.format(html))
 
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, 'html.parser')
     for anchor in soup.find_all('a'):
         if '?action=validate' in anchor.get('href'):
             return anchor.get('href')
