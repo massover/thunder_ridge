@@ -75,8 +75,8 @@ def test_get_email_from_ses_email(mock_get, _):
 
 
 @patch('requests.get')
-@patch.object(Email, 'body',  new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
-def test_make_confirmation_request(mock_body, mock_get):
+@patch.object(Email, 'html',  new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
+def test_make_confirmation_request(mock_html, mock_get):
     email = Email('message_id', 'to', Email.CONFIRMATION_SUBJECT_TEXT)
     email.make_confirmation_request()
 

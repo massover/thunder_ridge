@@ -59,9 +59,21 @@ class Email(object):
     def message(self):
         return email.message_from_string(self.body)
 
+    @property
+    def html(self):
+        """
+        When testing and sending an email to SES via gmail, the content type
+        is `multipart/alternative`. When SES receives the emails from the
+        server directly, the content type is `text/html`"
+        """
+        for part in self.message.walk():
+            if part.get_content_type() == 'text/html':
+                return part.get_payload()
+
+        raise RuntimeError('Email does not contain text/html content type')
+
     def make_confirmation_request(self):
-        html = self.message.get_payload()
-        confirmation_link = utils.parse_confirmation_link(html)
+        confirmation_link = utils.parse_confirmation_link(self.html)
         response = requests.get(confirmation_link)
         message = ('response.url: %s\n'
                    'response.status_code: %s\n'
