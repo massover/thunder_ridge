@@ -3,3 +3,4 @@ dist/*
 .cache/*
 .idea/*
 .env
+confirmation.txt

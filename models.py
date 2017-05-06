@@ -1,4 +1,3 @@
-import quopri
 import logging
 import email
 
@@ -8,7 +7,7 @@ import boto3
 import utils
 import constants
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
@@ -56,8 +55,13 @@ class Email(object):
         object = s3.Object(constants.S3_BUCKET_NAME, self.message_id)
         return object.get()["Body"].read()
 
+    @property
+    def message(self):
+        return email.message_from_string(self.body)
+
     def make_confirmation_request(self):
-        confirmation_link = utils.parse_confirmation_link(quopri.decodestring(self.body))
+        html = self.message.get_payload()
+        confirmation_link = utils.parse_confirmation_link(html)
         response = requests.get(confirmation_link)
         message = ('response.url: %s\n'
                    'response.status_code: %s\n'
@@ -65,12 +69,9 @@ class Email(object):
         logger.info(message, response.url, response.status_code, response.text)
 
     def forward(self, destinations):
-        message = email.message_from_string(self.body)
-        message['From'] = constants.FROM_EMAIL_ADDRESS
-        message['To'] = destinations
         ses = boto3.client('ses')
         ses.send_raw_email(
-            RawMessage={'Data': message.as_string()},
+            RawMessage={'Data': self.message.as_string()},
             Source=constants.FROM_EMAIL_ADDRESS,
             Destinations=destinations,
         )

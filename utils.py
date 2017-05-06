@@ -1,15 +1,27 @@
-import re
+import logging
 
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
 import constants
 
+from bs4 import BeautifulSoup
 
-def parse_confirmation_link(body):
-    match = re.match('.*<(.*)>\*You.*', body, re.DOTALL)
-    confirmation_link = match.group(1)
-    return confirmation_link.replace('\n', '')
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+def parse_confirmation_link(html):
+    logging.info('Parsing html for confirmation link: {}'.format(html))
+
+    soup = BeautifulSoup(html)
+    for anchor in soup.find_all('a'):
+        if '?action=validate' in anchor.get('href'):
+            return anchor.get('href')
+
+    message = 'Error parsing confirmation link from confirmation email'
+    logger.error(message)
+    raise RuntimeError(message)
 
 
 def get_email_address_from_ses_email(ses_email):

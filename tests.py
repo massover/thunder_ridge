@@ -1,18 +1,31 @@
-import quopri
-
 import requests
-from mock import patch
+from mock import patch, PropertyMock
+
+import pytest
 
 from models import Email
 from utils import parse_confirmation_link, get_email_address_from_ses_email
 
 
-def test_get_confirmation_link():
-    with open('confirmation.txt') as fp:
-        body = fp.read()
+CONFIRMATION_LINK = 'https://lottery.broadwaydirect.com?action=validate&u=13723977&t=5e4bc398448a91fb398e3320d877f24d'
+CONFIRMATION_LINK_HTML = '<a href="{}">'.format(CONFIRMATION_LINK)
 
-    link = parse_confirmation_link(quopri.decodestring(body))
-    assert link == "https://lottery.broadwaydirect.com/?action=validate&u=12402178&t=6ed51ecc573ea1982a3124e41fc4ac6f"
+
+def test_parse_confirmation_link():
+    html = ('<a href="href-1">' +
+            CONFIRMATION_LINK_HTML +
+            '<a href="href-2">')
+
+    link = parse_confirmation_link(html)
+    assert link == CONFIRMATION_LINK
+
+
+def test_parse_confirmation_link_raises_runtime_error_when_it_fails_parse():
+    html = ('<a href="href-1">'
+            '<a href="href-2">')
+
+    with pytest.raises(RuntimeError):
+        link = parse_confirmation_link(html)
 
 
 def test_email_create_from_event():
@@ -59,4 +72,23 @@ def test_get_email_from_ses_email(mock_get, _):
 
     email = get_email_address_from_ses_email('this-is-mocked@example.com')
     assert email == 'user@example.com'
+
+
+@patch('requests.get')
+@patch.object(Email, 'body',  new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
+def test_make_confirmation_request(mock_body, mock_get):
+    email = Email('message_id', 'to', Email.CONFIRMATION_SUBJECT_TEXT)
+    email.make_confirmation_request()
+
+
+@patch('boto3.client')
+@patch.object(Email, 'body', new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
+def test_forward(mock_body, mock_get):
+    email = Email('message_id', 'to', Email.CONFIRMATION_SUBJECT_TEXT)
+    destinations = ['user@example.com',]
+    email.forward(destinations)
+
+
+
+
 
