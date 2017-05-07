@@ -82,6 +82,7 @@ class Email(object):
 
     def forward(self, destinations):
         ses = boto3.client('ses')
+        self.message['From'] = constants.FROM_EMAIL_ADDRESS
         ses.send_raw_email(
             RawMessage={'Data': self.message.as_string()},
             Source=constants.FROM_EMAIL_ADDRESS,
