@@ -1,5 +1,6 @@
 import logging
 import email
+from email.mime.text import MIMEText
 
 import requests
 import boto3
@@ -7,7 +8,7 @@ import boto3
 import utils
 import constants
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
@@ -68,7 +69,7 @@ class Email(object):
         """
         for part in self.message.walk():
             if part.get_content_type() == 'text/html':
-                return part.get_payload()
+                return part.get_payload(decode=True)
 
         raise RuntimeError('Email does not contain text/html content type')
 
@@ -80,12 +81,18 @@ class Email(object):
                    'response.text: %s')
         logger.info(message, response.url, response.status_code, response.text)
 
-    def forward(self, destinations):
+    def forward(self, to, cc):
         ses = boto3.client('ses')
-        self.message['From'] = constants.FROM_EMAIL_ADDRESS
+
+        mime = MIMEText(self.html, 'html')
+        mime['To'] = to
+        mime['Cc'] = cc
+        mime['From'] = constants.FROM_EMAIL_ADDRESS
+        mime['Subject'] = self.message['Subject']
+
         ses.send_raw_email(
-            RawMessage={'Data': self.message.as_string()},
+            RawMessage={'Data': mime.as_string()},
             Source=constants.FROM_EMAIL_ADDRESS,
-            Destinations=destinations,
+            Destinations=[to, cc],
         )
-        logger.info('Winning email successfully forwarded to {}'.format(' '.join(destinations)))
+        logger.info('Winning email successfully forwarded to {} {}'.format(to, cc))

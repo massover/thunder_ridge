@@ -20,8 +20,7 @@ def handler(event, context):
     elif email.is_winner:
         logger.info('\tResult: You won')
         email_address = utils.get_email_address_from_ses_email(email.to)
-        destinations = [email_address, constants.ADMIN_EMAIL_ADDRESS]
-        email.forward(destinations)
+        email.forward(to=email_address, cc=constants.ADMIN_EMAIL_ADDRESS)
 
     elif email.is_confirmation:
         logger.info('\tResult: Confirm email address')

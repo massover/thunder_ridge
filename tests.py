@@ -82,11 +82,13 @@ def test_make_confirmation_request(mock_html, mock_get):
 
 
 @patch('boto3.client')
+@patch.object(Email, 'html', new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
 @patch.object(Email, 'body', new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
-def test_forward(mock_body, mock_get):
+def test_forward(mock_body, mock_html, mock_get):
     email = Email('message_id', 'to', Email.CONFIRMATION_SUBJECT_TEXT)
-    destinations = ['user@example.com',]
-    email.forward(destinations)
+    to = 'to@example.com'
+    cc = 'cc@example.com'
+    email.forward(to, cc)
 
 
 
