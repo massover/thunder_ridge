@@ -5,8 +5,7 @@ from models import Email
 import utils
 import constants
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+from utils import logger
 
 
 def handler(event, context):

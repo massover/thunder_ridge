@@ -7,7 +7,8 @@ import boto3
 
 import utils
 import constants
-from service import logger
+
+from utils import logger
 
 class Email(object):
     TRY_AGAIN_SUBJECT_TEXT = 'Lottery Results: Try Again'
