@@ -17,7 +17,7 @@ def handler(event, context):
     if email.is_try_again:
         logger.info('\tResult: Try again')
 
-    if email.is_lottery_entry_recieved:
+    elif email.is_lottery_entry_recieved:
         logger.info('\tResult: Lottery Entry Received')
 
     elif email.is_winner:

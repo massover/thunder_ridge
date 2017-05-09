@@ -7,10 +7,7 @@ import boto3
 
 import utils
 import constants
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
+from service import logger
 
 class Email(object):
     TRY_AGAIN_SUBJECT_TEXT = 'Lottery Results: Try Again'
@@ -33,6 +30,7 @@ class Email(object):
             common_headers = mail.get('commonHeaders')
             to = common_headers.get('to')[0]
             subject = common_headers.get('subject')
+            logging.info('message_id: %s to: %s subject: %s', message_id, to, subject)
         except (IndexError, KeyError):
             logger.error('Invalid event')
             raise RuntimeError('Invalid event')
