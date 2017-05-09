@@ -63,6 +63,11 @@ def test_email_is_try_again():
     assert email.is_try_again
 
 
+def test_email_is_lottery_entry_recieved():
+    email = Email('message_id', 'to', Email.LOTTERY_ENTRY_RECIEVED_TEXT)
+    assert email.is_lottery_entry_recieved
+
+
 @patch('requests_oauthlib.OAuth2Session.fetch_token')
 @patch('requests_oauthlib.OAuth2Session.get')
 def test_get_email_from_ses_email(mock_get, _):

@@ -16,6 +16,7 @@ class Email(object):
     TRY_AGAIN_SUBJECT_TEXT = 'Lottery Results: Try Again'
     WINNER_SUBJECT_TEXT = 'Lottery Results - YOU WON!'
     CONFIRMATION_SUBJECT_TEXT = 'Action Required: Confirm your email address'
+    LOTTERY_ENTRY_RECIEVED_TEXT = 'Lottery Entry Received'
 
     def __init__(self, message_id, to, subject):
         self.message_id = message_id
@@ -37,6 +38,10 @@ class Email(object):
             raise RuntimeError('Invalid event')
 
         return cls(message_id, to, subject)
+
+    @property
+    def is_lottery_entry_recieved(self):
+        return self.LOTTERY_ENTRY_RECIEVED_TEXT in self.subject
 
     @property
     def is_try_again(self):

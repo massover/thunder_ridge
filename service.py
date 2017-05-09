@@ -17,6 +17,9 @@ def handler(event, context):
     if email.is_try_again:
         logger.info('\tResult: Try again')
 
+    if email.is_lottery_entry_recieved:
+        logger.info('\tResult: Lottery Entry Received')
+
     elif email.is_winner:
         logger.info('\tResult: You won')
         email_address = utils.get_email_address_from_ses_email(email.to)
