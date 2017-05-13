@@ -13,6 +13,8 @@ make test
 ## Deploy
 
 ```
+make lint
+make test
 make deploy
 ```
 

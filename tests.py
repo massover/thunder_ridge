@@ -25,7 +25,7 @@ def test_parse_confirmation_link_raises_runtime_error_when_it_fails_parse():
             '<a href="href-2">')
 
     with pytest.raises(RuntimeError):
-        link = parse_confirmation_link(html)
+        parse_confirmation_link(html)
 
 
 def test_email_create_from_event():
@@ -63,9 +63,14 @@ def test_email_is_try_again():
     assert email.is_try_again
 
 
-def test_email_is_lottery_entry_recieved():
-    email = Email('message_id', 'to', Email.LOTTERY_ENTRY_RECIEVED_TEXT)
+def test_email_is_lottery_entry_received():
+    email = Email('message_id', 'to', Email.LOTTERY_ENTRY_RECEIVED_TEXT)
     assert email.is_lottery_entry_recieved
+
+
+def test_email_is_lottery_payment_confirmation():
+    email = Email('message_id', 'to', Email.LOTTERY_PAYMENT_CONFIRMATION)
+    assert email.is_lottery_payment_confirmation
 
 
 @patch('requests_oauthlib.OAuth2Session.fetch_token')
@@ -80,7 +85,7 @@ def test_get_email_from_ses_email(mock_get, _):
 
 
 @patch('requests.get')
-@patch.object(Email, 'html',  new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
+@patch.object(Email, 'html', new_callable=PropertyMock, return_value=CONFIRMATION_LINK_HTML)
 def test_make_confirmation_request(mock_html, mock_get):
     email = Email('message_id', 'to', Email.CONFIRMATION_SUBJECT_TEXT)
     email.make_confirmation_request()
@@ -94,8 +99,3 @@ def test_forward(mock_body, mock_html, mock_get):
     to = 'to@example.com'
     cc = 'cc@example.com'
     email.forward(to, cc)
-
-
-
-
-

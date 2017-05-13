@@ -4,5 +4,8 @@ develop:
 deploy:
 	lambda deploy
 
+lint:
+	flake8
+
 test:
 	py.test tests.py
