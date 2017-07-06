@@ -31,4 +31,3 @@ def handler(event, context):
 
     else:
         logger.error('Result: Invalid subject line {}'.format(email.subject))
-        raise RuntimeError('Invalid subject line')
